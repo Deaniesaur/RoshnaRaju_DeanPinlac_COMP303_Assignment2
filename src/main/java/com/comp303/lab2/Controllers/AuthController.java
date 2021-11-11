@@ -1,8 +1,5 @@
 package com.comp303.lab2.Controllers;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -14,16 +11,12 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.ModelAndView;
 
 import com.comp303.lab2.Models.Customer;
-import com.comp303.lab2.Models.Program;
 import com.comp303.lab2.Repositories.CustomerRepository;
-import com.comp303.lab2.Repositories.ProgramRepository;
 
 @Controller
 public class AuthController {
 	@Autowired
 	private CustomerRepository customerRepository;
-	@Autowired
-	private ProgramRepository programRepository;
 	
 	@RequestMapping({"/", "/login"})
 	public ModelAndView getLogin() {
@@ -46,24 +39,11 @@ public class AuthController {
 			mview.addObject("username", username);
 			mview.addObject("errorMessage", "Invalid Username");
 		}else {
-			checkForAvailablePrograms();
 			mview = new ModelAndView("program");
 			mview.addObject("errorMessage", "Succesfully Logged In");
 		}
 		
 		return mview;
-	}
-	
-	private void checkForAvailablePrograms() {
-		
-		long programCount = programRepository.count();
-		if(programCount == 0) {
-		  List<Program> pgmList = new ArrayList<Program>();
-		  pgmList.add(new Program("100","Yoga",6,100));
-		  pgmList.add(new Program("101","Swimming",4,150));
-		  pgmList.add(new Program("102","Bootcamp",3,200));
-		  programRepository.saveAll(pgmList);
-		}
 	}
 
 	@RequestMapping("/register")

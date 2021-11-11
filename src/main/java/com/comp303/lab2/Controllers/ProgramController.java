@@ -2,21 +2,18 @@ package com.comp303.lab2.Controllers;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 
+import javax.annotation.PostConstruct;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.ModelAndView;
 
-import com.comp303.lab2.Models.Customer;
 import com.comp303.lab2.Models.Program;
-import com.comp303.lab2.Repositories.CustomerRepository;
 import com.comp303.lab2.Repositories.ProgramRepository;
 
 @Controller
@@ -24,9 +21,23 @@ public class ProgramController {
 	
 	@Autowired
 	private ProgramRepository programRepository;
+	
+	@PostConstruct
+	private void initializePrograms() {
+		//Initialize Programs
+		long programCount = programRepository.count();
+		
+		if(programCount == 0) {
+		  List<Program> pgmList = new ArrayList<Program>();
+		  pgmList.add(new Program("100","Yoga",6,100));
+		  pgmList.add(new Program("101","Swimming",4,150));
+		  pgmList.add(new Program("102","Bootcamp",3,200));
+		  programRepository.saveAll(pgmList);
+		}
+	}
 
 	@RequestMapping(value = "/enroll", method = RequestMethod.POST)
-	public ModelAndView processLogin(HttpServletRequest request, HttpServletResponse response) {
+	public ModelAndView processEnroll(HttpServletRequest request, HttpServletResponse response) {
 		ModelAndView mview;
 		
 		String program = request.getParameter("program");
@@ -56,8 +67,8 @@ public class ProgramController {
 		return mview;
 	}
 	
-	@RequestMapping({"/back"})
-	public ModelAndView getLogin() {
+	@RequestMapping("/programs")
+	public ModelAndView programs() {
 		
 		ModelAndView mview = new ModelAndView("program");
 		return mview;

@@ -1,7 +1,5 @@
 package com.comp303.lab2.Repositories;
 
-import java.util.Optional;
-
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import com.comp303.lab2.Models.Customer;
