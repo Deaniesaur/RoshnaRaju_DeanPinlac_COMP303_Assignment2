@@ -28,7 +28,7 @@
 			</div>
 		</form>
 		<div class="text-center my-1">
-		<form action="back" method="post">
+		<form action="programs" method="get">
 				<button type="submit" class="btn btn-primary">Back</button>
 		</form>
 		</div>
