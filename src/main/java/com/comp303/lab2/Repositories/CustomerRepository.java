@@ -6,4 +6,6 @@ import com.comp303.lab2.Models.Customer;
 
 public interface CustomerRepository extends JpaRepository<Customer, Integer>{
 	long countByUserNameAndPassword(String username, String password);
+	
+	Customer findByUserName(String username);
 }
