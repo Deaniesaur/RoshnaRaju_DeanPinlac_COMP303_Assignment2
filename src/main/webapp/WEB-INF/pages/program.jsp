@@ -14,6 +14,7 @@
 	<script src="http://code.jquery.com/jquery-latest.min.js"></script>
 </head>
 <body>
+	<div><%= request.getSession().getAttribute("username") %></div>
 	<div class="login-container p-3 border rounded bg-light">
 		<form action="enroll" method="post">
 		<div style="color: #FF0000;">${errorMessageForPgm}</div>

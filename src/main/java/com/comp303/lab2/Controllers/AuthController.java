@@ -39,10 +39,19 @@ public class AuthController {
 			mview.addObject("username", username);
 			mview.addObject("errorMessage", "Invalid Username");
 		}else {
+			request.getSession().setMaxInactiveInterval(900);
+			request.getSession().setAttribute("username", username);
 			mview = new ModelAndView("program");
 			mview.addObject("errorMessage", "Succesfully Logged In");
 		}
 		
+		return mview;
+	}
+	
+	@RequestMapping("/logout")
+	public ModelAndView getLogout(HttpServletRequest request, HttpServletResponse response) {
+		request.getSession().invalidate();
+		ModelAndView mview = new ModelAndView("index");
 		return mview;
 	}
 
@@ -76,5 +85,39 @@ public class AuthController {
 		
 		mview = new ModelAndView("index");
 		return mview;
+	}
+	
+	@RequestMapping("/profile")
+	public ModelAndView getProfile(HttpServletRequest request, HttpServletResponse response) {
+		Object usernameObject = request.getSession().getAttribute("username");
+		ModelAndView mview;
+		
+		if(usernameObject == null) {
+			mview = new ModelAndView("index");
+			return mview;
+		}
+		
+		Customer customer = customerRepository.findByUserName(usernameObject.toString());
+		mview = new ModelAndView("profile");
+		mview.addObject("customer", customer);
+		return mview;
+	}
+	
+	@RequestMapping(value = "/profile", method = RequestMethod.POST)
+	public String updateProfile(HttpServletRequest request, HttpServletResponse response) {
+		Object usernameObject = request.getSession().getAttribute("username");
+		if(usernameObject == null) {
+			return "index";
+		}
+		
+		Customer customer = customerRepository.findByUserName(usernameObject.toString());
+		customer.setFirstName(request.getParameter("firstname"));
+		customer.setLastName(request.getParameter("lastname"));
+		customer.setAddress(request.getParameter("address"));
+		customer.setCity(request.getParameter("city"));
+		customer.setPostalCode(request.getParameter("postalcode"));
+		
+		customerRepository.save(customer);
+		return "redirect:/profile";
 	}
 }
