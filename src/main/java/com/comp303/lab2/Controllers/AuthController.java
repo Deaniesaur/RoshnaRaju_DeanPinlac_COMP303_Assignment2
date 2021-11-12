@@ -1,7 +1,5 @@
 package com.comp303.lab2.Controllers;
 
-import java.util.List;
-
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
