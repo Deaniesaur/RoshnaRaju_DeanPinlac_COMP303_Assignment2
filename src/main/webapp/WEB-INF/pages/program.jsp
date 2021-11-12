@@ -25,6 +25,10 @@
 			    <option value="101">Swimming</option>
 			    <option value="102">Bootcamp</option>
 				</select>
+				<label for="pgmDate" class="form-label">Choose Your Start Date</label>
+				<input type="date" class="form-control" name="pgmDate">
+				
+				<input type="hidden" class="form-control" name="username" value ="${username}">
 			</div>
 			<div class="text-center my-1">
 				<button type="submit" class="btn btn-primary">Enroll</button>

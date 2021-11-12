@@ -21,7 +21,8 @@ public class ProgramController {
 	
 	@Autowired
 	private ProgramRepository programRepository;
-	
+	private String pgmCode ;
+	private String username;
 	@PostConstruct
 	private void initializePrograms() {
 		//Initialize Programs
@@ -41,11 +42,16 @@ public class ProgramController {
 		ModelAndView mview;
 		
 		String program = request.getParameter("program");
-		
+		username = request.getParameter("username");
 		if(null==program || "".equalsIgnoreCase(program))
 		{
 			mview = new ModelAndView("program");
 			mview.addObject("errorMessageForPgm", "Please choose your program before proceeding");
+		}else if(null == request.getParameter("pgmDate") || "".equalsIgnoreCase(request.getParameter("pgmDate"))){
+			
+			mview = new ModelAndView("program");
+			mview.addObject("errorMessageForPgm", "Please choose your program start date before proceeding");
+			
 		}else {
 			List<String> idList = new ArrayList<String>();
 			idList.add(program);
@@ -56,12 +62,15 @@ public class ProgramController {
 			if(null!= pgm && pgm.size()>0) {
 				pgmName =pgm.get(0).getProgramName();
 				pgmDuration =pgm.get(0).getDuration()+" Months";
-				pgmFees ="$"+pgm.get(0).getFee()+" Per Month";
+				pgmFees = pgm.get(0).getFee()+"";
+				pgmCode = pgm.get(0).getProgramCode();
 			}
 			mview = new ModelAndView("enroll");
 			mview.addObject("pgmName", pgmName);
 			mview.addObject("pgmDuration", pgmDuration);
 			mview.addObject("pgmFees", pgmFees);
+			mview.addObject("pgmCode", pgmCode);
+			mview.addObject("pgmDate", request.getParameter("pgmDate"));
 		}
 		
 		return mview;
@@ -71,6 +80,18 @@ public class ProgramController {
 	public ModelAndView programs() {
 		
 		ModelAndView mview = new ModelAndView("program");
+		return mview;
+	}
+	
+	@RequestMapping(value = "/proceed", method = RequestMethod.POST)
+	public ModelAndView proceedToCheckout(HttpServletRequest request, HttpServletResponse response) {
+		ModelAndView mview;
+		mview = new ModelAndView("checkout");
+		mview.addObject("username", username);
+		mview.addObject("pgmCode", request.getParameter("pgmCode"));
+		mview.addObject("pgmDate", request.getParameter("pgmDate"));
+		mview.addObject("pgmFees", request.getParameter("pgmFees"));
+		
 		return mview;
 	}
 }
