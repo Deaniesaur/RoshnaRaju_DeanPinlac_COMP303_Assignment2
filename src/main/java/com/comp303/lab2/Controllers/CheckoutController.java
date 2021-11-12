@@ -2,15 +2,13 @@ package com.comp303.lab2.Controllers;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
-import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.ModelAndView;
@@ -24,6 +22,7 @@ import com.comp303.lab2.Repositories.ProgramRepository;
 
 @Controller
 public class CheckoutController {
+	private final DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy-MM-dd");
 	
 	@Autowired
 	private EnrollmentRepository enrollmentRepository;
@@ -34,34 +33,36 @@ public class CheckoutController {
 	
 	
 	@RequestMapping(value = "/checkout", method = RequestMethod.POST)
-	public ModelAndView processCheckout(HttpServletRequest request, HttpServletResponse response) {
-		ModelAndView mview = null;
-		final DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+	public String processCheckout(HttpServletRequest request, HttpServletResponse response) {
 		final LocalDate dt = LocalDate.parse(request.getParameter("pgmDate"), dtf); 
-
-		//double pgmFees = Double.parseDouble(request.getParameter("pgmFees"));
-		List<Customer> customerList = customerRepository.findAll();
-		int custId = 0;
-		Customer custObj = null;
-		for (Customer customer : customerList) {
-			if(customer.getUserName().equalsIgnoreCase(request.getParameter("username"))) {
-				custId = customer.getCustomerId();
-				custObj = customer;
-			}
-		}
-		
-		List<Program> pgmList = programRepository.findAll();
-		Program pgmObj = null;
-		for (Program program : pgmList) {
-			if(program.getProgramCode().equalsIgnoreCase(request.getParameter("pgmCode"))) {
-				pgmObj = program;
-			}
-		}
+		//Get customer by userName
+		Customer custObj = customerRepository.findByUserName(request.getParameter("username"));
+		//Get program by program code
+		Program pgmObj = programRepository.getById(request.getParameter("pgmCode"));
 		Enrollment enroll = new Enrollment(custObj, pgmObj, dt, Double.parseDouble(request.getParameter("pgmFees")), "A");
-		enrollmentRepository.save(enroll);
-		//mview.addObject("custId", custId);
-		mview = new ModelAndView("confirmation");
-		return mview;
+		enroll = enrollmentRepository.save(enroll);
+		return "redirect:/confirm/" + enroll.getApplicationNo();
 	}
 	
+	@RequestMapping("/confirm/{enrollId}")
+	public ModelAndView getLogin(@PathVariable("enrollId") int id,
+									HttpServletRequest request, HttpServletResponse response) {		Enrollment enrollment;
+		try {
+			enrollment = enrollmentRepository.getById(id);
+			Customer customer = enrollment.getCustomer();
+			Program program = enrollment.getProgram();
+			ModelAndView mview = new ModelAndView("confirmation");
+			mview.addObject("Name", customer.getLastName() + ", " + customer.getFirstName());
+			mview.addObject("ProgramName", program.getProgramName());
+			mview.addObject("Code", program.getProgramCode());
+			mview.addObject("Date", enrollment.getStartDate().format(dtf));
+			mview.addObject("Paid", enrollment.getAmountPaid());
+			
+			return mview;
+		}catch(Exception ex) {
+			System.out.print(ex);
+		}
+		
+		return null;
+	}
 }
