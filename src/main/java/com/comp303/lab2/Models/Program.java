@@ -17,4 +17,6 @@ public class Program {
 	private String programName;
 	private long duration;
 	private double fee;
+	
+	
 }

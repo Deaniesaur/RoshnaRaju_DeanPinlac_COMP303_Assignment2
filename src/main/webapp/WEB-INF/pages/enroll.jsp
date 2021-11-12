@@ -15,17 +15,20 @@
 </head>
 <body>
 	<div class="login-container p-3 border rounded bg-light">
-		<form action="checkout" method="post">
+		<form action="proceed" method="post">
 		<div style="color: #FF0000;">Your Program Details</div>
 		<br/>
 		<ul>
 		<li><div>Program Name: ${pgmName}</div></li>
 		<li><div>Duration: ${pgmDuration}</div></li>
-		<li><div>Fees: ${pgmFees}</div></li>
+		<li><div>Fees: $${pgmFees} Per Month</div></li>
 		</ul>
 			<div class="text-center my-1">
 				<button type="submit" class="btn btn-primary">Proceed To Checkout</button>
 			</div>
+		<input type="hidden" class="form-control" name="pgmCode" value ="${pgmCode}">
+		<input type="hidden" class="form-control" name="pgmDate" value ="${pgmDate}">
+		<input type="hidden" class="form-control" name="pgmFees" value ="${pgmFees}">
 		</form>
 		<div class="text-center my-1">
 		<form action="programs" method="get">

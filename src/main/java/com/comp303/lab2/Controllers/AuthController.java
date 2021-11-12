@@ -1,5 +1,7 @@
 package com.comp303.lab2.Controllers;
 
+import java.util.List;
+
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -42,6 +44,7 @@ public class AuthController {
 			request.getSession().setMaxInactiveInterval(900);
 			request.getSession().setAttribute("username", username);
 			mview = new ModelAndView("program");
+			mview.addObject("username", username);
 			mview.addObject("errorMessage", "Succesfully Logged In");
 		}
 		
