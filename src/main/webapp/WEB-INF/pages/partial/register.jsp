@@ -1,4 +1,4 @@
-<div class="login-container p-3 border rounded bg-light">
+<div class="login-container">
 	<form action="register" method="post">
        	<div style="color: #FF0000;">${registrationError}</div>
 		<div class="mb-3">
