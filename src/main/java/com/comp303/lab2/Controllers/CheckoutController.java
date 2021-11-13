@@ -34,12 +34,22 @@ public class CheckoutController {
 	
 	@RequestMapping("/checkout")
 	public String proceedToCheckout(HttpSession session, HttpServletRequest request, HttpServletResponse response) {
+		if(session.getAttribute("username") == null) {
+			session.setAttribute("loginError", "Login to Checkout Programs");
+			return "redirect:/login";
+		}
+		
 		request.setAttribute("partial", "checkout");
 		return "index";
 	}
 	
 	@RequestMapping(value = "/checkout", method = RequestMethod.POST)
 	public String processCheckout(HttpSession session, HttpServletRequest request, HttpServletResponse response) {
+		if(session.getAttribute("username") == null) {
+			session.setAttribute("loginError", "Login to Checkout Programs");
+			return "redirect:/login";
+		}
+			
 		try {
 			LocalDate dt = LocalDate.parse((String) session.getAttribute("pgmDate"), dtf); 
 			//Get customer by userName
