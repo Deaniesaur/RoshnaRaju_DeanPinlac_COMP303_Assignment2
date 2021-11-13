@@ -2,13 +2,14 @@ package com.comp303.lab2.Controllers;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.servlet.ModelAndView;
 
 import com.comp303.lab2.Models.Customer;
 import com.comp303.lab2.Repositories.CustomerRepository;
@@ -18,15 +19,15 @@ public class AuthController {
 	@Autowired
 	private CustomerRepository customerRepository;
 	
-	@RequestMapping({"/", "/login"})
-	public ModelAndView getLogin() {
-		ModelAndView mview = new ModelAndView("index");
-		return mview;
+	@RequestMapping("/login")
+	public String getLogin(Model model) {
+		model.addAttribute("partial", "login");
+		return "index";
 	}
 	
 	@RequestMapping(value = "/login", method = RequestMethod.POST)
-	public ModelAndView processLogin(HttpServletRequest request, HttpServletResponse response) {
-		ModelAndView mview;
+	public String processLogin(HttpSession session,
+			HttpServletRequest request, HttpServletResponse response) {
 		
 		String username = request.getParameter("username").toLowerCase();
 		String password = request.getParameter("password");
@@ -35,83 +36,82 @@ public class AuthController {
 		
 		if(count == 0)
 		{
-			mview = new ModelAndView("index");
-			mview.addObject("username", username);
-			mview.addObject("errorMessage", "Invalid Username");
-		}else {
-			request.getSession().setMaxInactiveInterval(900);
-			request.getSession().setAttribute("username", username);
-			mview = new ModelAndView("program");
-			mview.addObject("username", username);
-			mview.addObject("errorMessage", "Succesfully Logged In");
+			session.setAttribute("loginError", "Invalid Username");
+			return "redirect:/login";
 		}
 		
-		return mview;
+		session.setMaxInactiveInterval(900);
+		session.setAttribute("username", username);
+		return "redirect:/programs";
 	}
 	
 	@RequestMapping("/logout")
-	public ModelAndView getLogout(HttpServletRequest request, HttpServletResponse response) {
-		request.getSession().invalidate();
-		ModelAndView mview = new ModelAndView("index");
-		return mview;
+	public String getLogout(HttpSession session) {
+		session.invalidate();
+		return "redirect:/login";
 	}
 
 	@RequestMapping("/register")
-	public ModelAndView getRegister() {
-		ModelAndView mview = new ModelAndView("register");
-		return mview;
+	public String getRegister(Model model) {
+		model.addAttribute("partial", "register");
+		return "index";
 	}
 	
 	@RequestMapping(value = "/register", method = RequestMethod.POST)
-	public ModelAndView processRegister(HttpServletRequest request, HttpServletResponse response) {
+	public String processRegister(HttpSession session,
+			HttpServletRequest request, HttpServletResponse response) {
 		//TODO: Add Validation for confirm password
-		ModelAndView mview = new ModelAndView("register");
-		
-		Customer customer = new Customer(
-					request.getParameter("username").toLowerCase(),
-					request.getParameter("firstname"),
-					request.getParameter("lastname"),
-					request.getParameter("password")
-				);
-		
 		try {
+			String password = request.getParameter("password");
+			String confirm = request.getParameter("confirmpassword");
+			if(!password.equals(confirm))
+				throw new Exception("Passwords Mismatched!");
+			
+			Customer customer = new Customer(
+						request.getParameter("username").toLowerCase(),
+						request.getParameter("firstname"),
+						request.getParameter("lastname"),
+						request.getParameter("password")
+					);
+		
 			customerRepository.save(customer);
+			return "redirect:/login";
 		}catch(DataIntegrityViolationException ex) {
-			mview.addObject("errorMessage", "Username already exists");
-			return mview;
+			session.setAttribute("registrationError", "Username already exists");
 		}catch(Exception ex) {
-			mview.addObject("errorMessage", ex.getClass());
-			return mview;
+			session.setAttribute("registrationError", ex.getMessage());
 		}
 		
-		mview = new ModelAndView("index");
-		return mview;
+		session.setAttribute("username", request.getParameter("username"));
+		session.setAttribute("firstname", request.getParameter("firstname"));
+		session.setAttribute("lastname", request.getParameter("lastname"));
+		return "redirect:/register";
 	}
 	
 	@RequestMapping("/profile")
-	public ModelAndView getProfile(HttpServletRequest request, HttpServletResponse response) {
-		Object usernameObject = request.getSession().getAttribute("username");
-		ModelAndView mview;
+	public String getProfile(Model model, HttpSession session,
+			HttpServletRequest request, HttpServletResponse response) {
+		String username = (String) session.getAttribute("username");
 		
-		if(usernameObject == null) {
-			mview = new ModelAndView("index");
-			return mview;
+		if(username == null) {
+			return "redirect:/login";
 		}
 		
-		Customer customer = customerRepository.findByUserName(usernameObject.toString());
-		mview = new ModelAndView("profile");
-		mview.addObject("customer", customer);
-		return mview;
+		Customer customer = customerRepository.findByUserName(username);
+		model.addAttribute("partial", "profile");
+		model.addAttribute("customer", customer);
+		return "index";
 	}
 	
 	@RequestMapping(value = "/profile", method = RequestMethod.POST)
-	public String updateProfile(HttpServletRequest request, HttpServletResponse response) {
-		Object usernameObject = request.getSession().getAttribute("username");
-		if(usernameObject == null) {
-			return "index";
+	public String updateProfile(HttpSession session,
+			HttpServletRequest request, HttpServletResponse response) {
+		String username = (String) session.getAttribute("username");
+		if(username == null) {
+			return "redirect:/login";
 		}
 		
-		Customer customer = customerRepository.findByUserName(usernameObject.toString());
+		Customer customer = customerRepository.findByUserName(username);
 		customer.setFirstName(request.getParameter("firstname"));
 		customer.setLastName(request.getParameter("lastname"));
 		customer.setAddress(request.getParameter("address"));
@@ -119,6 +119,7 @@ public class AuthController {
 		customer.setPostalCode(request.getParameter("postalcode"));
 		
 		customerRepository.save(customer);
+		session.setAttribute("updateNotification", "Profile Updated!");
 		return "redirect:/profile";
 	}
 }

@@ -1,28 +1,30 @@
 package com.comp303.lab2.Controllers;
 
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 
 import javax.annotation.PostConstruct;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.servlet.ModelAndView;
 
 import com.comp303.lab2.Models.Program;
 import com.comp303.lab2.Repositories.ProgramRepository;
 
 @Controller
 public class ProgramController {
+	private final DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy-MM-dd");
 	
 	@Autowired
 	private ProgramRepository programRepository;
-	private String pgmCode ;
-	private String username;
+	
 	@PostConstruct
 	private void initializePrograms() {
 		//Initialize Programs
@@ -36,62 +38,38 @@ public class ProgramController {
 		  programRepository.saveAll(pgmList);
 		}
 	}
+	
+	@RequestMapping({"/", "/programs"})
+	public String programs(Model model, HttpSession session) {
+		session.setAttribute("pgmDate", LocalDate.now().format(dtf));
+		model.addAttribute("partial", "program");
+		return "index";
+	}
 
-	@RequestMapping(value = "/enroll", method = RequestMethod.POST)
-	public ModelAndView processEnroll(HttpServletRequest request, HttpServletResponse response) {
-		ModelAndView mview;
+	@RequestMapping(value = "/programs/detail")
+	public String enroll(HttpSession session,
+			HttpServletRequest request, HttpServletResponse response) {
+		String programCode = request.getParameter("program");
+		String programDate = request.getParameter("pgmDate");
 		
-		String program = request.getParameter("program");
-		username = request.getParameter("username");
-		if(null==program || "".equalsIgnoreCase(program))
-		{
-			mview = new ModelAndView("program");
-			mview.addObject("errorMessageForPgm", "Please choose your program before proceeding");
-		}else if(null == request.getParameter("pgmDate") || "".equalsIgnoreCase(request.getParameter("pgmDate"))){
-			
-			mview = new ModelAndView("program");
-			mview.addObject("errorMessageForPgm", "Please choose your program start date before proceeding");
-			
-		}else {
-			List<String> idList = new ArrayList<String>();
-			idList.add(program);
-			String pgmName = null;
-			String pgmDuration = null;
-			String pgmFees = null;
-			List<Program> pgm = programRepository.findAllById(idList);
-			if(null!= pgm && pgm.size()>0) {
-				pgmName =pgm.get(0).getProgramName();
-				pgmDuration =pgm.get(0).getDuration()+" Months";
-				pgmFees = pgm.get(0).getFee()+"";
-				pgmCode = pgm.get(0).getProgramCode();
+		try {
+			Program pgm = programRepository.getById(programCode);
+			if(pgm == null) {
+				throw new Exception("Program not found!");
 			}
-			mview = new ModelAndView("enroll");
-			mview.addObject("pgmName", pgmName);
-			mview.addObject("pgmDuration", pgmDuration);
-			mview.addObject("pgmFees", pgmFees);
-			mview.addObject("pgmCode", pgmCode);
-			mview.addObject("pgmDate", request.getParameter("pgmDate"));
+			
+			session.setAttribute("pgmName", pgm.getProgramName());
+			session.setAttribute("pgmDuration", pgm.getDuration() + " Months");
+			session.setAttribute("pgmFees", pgm.getFee());
+			session.setAttribute("pgmCode", programCode);
+			session.setAttribute("pgmDate", programDate);
+			
+			request.setAttribute("partial", "detail");
+			return "index";
+		}catch(Exception ex) {
+			session.setAttribute("programError", ex.getMessage());
 		}
 		
-		return mview;
-	}
-	
-	@RequestMapping("/programs")
-	public ModelAndView programs() {
-		
-		ModelAndView mview = new ModelAndView("program");
-		return mview;
-	}
-	
-	@RequestMapping(value = "/proceed", method = RequestMethod.POST)
-	public ModelAndView proceedToCheckout(HttpServletRequest request, HttpServletResponse response) {
-		ModelAndView mview;
-		mview = new ModelAndView("checkout");
-		mview.addObject("username", username);
-		mview.addObject("pgmCode", request.getParameter("pgmCode"));
-		mview.addObject("pgmDate", request.getParameter("pgmDate"));
-		mview.addObject("pgmFees", request.getParameter("pgmFees"));
-		
-		return mview;
+		return "redirect:/program";
 	}
 }
