@@ -5,23 +5,27 @@
 	<hr>
 	<div>
 		<dl class="row justify-content-center">
-			<dt class="col-4">Name</dt>
+			<dt class="col-5">Name</dt>
 			<dd class="col-7">${Name}</dd>
 		</dl>
 		<dl class="row justify-content-center">
-			<dt class="col-4">Program Name</dt>
+			<dt class="col-5">Program Name</dt>
 			<dd class="col-7">${ProgramName}</dd>
 		</dl>
 		<dl class="row justify-content-center">
-			<dt class="col-4">Program Code</dt>
+			<dt class="col-5">Program Code</dt>
 			<dd class="col-7">${Code}</dd>
 		</dl>
 		<dl class="row justify-content-center">
-			<dt class="col-4">Start Date</dt>
+			<dt class="col-5">Program Duration</dt>
+			<dd class="col-7">${Duration}</dd>
+		</dl>
+		<dl class="row justify-content-center">
+			<dt class="col-5">Start Date</dt>
 			<dd class="col-7">${Date}</dd>
 		</dl>
 		<dl class="row justify-content-center">
-			<dt class="col-4">Amount Paid</dt>
+			<dt class="col-5">Amount Paid</dt>
 			<dd class="col-7">${Paid}</dd>
 		</dl>
 	</div>

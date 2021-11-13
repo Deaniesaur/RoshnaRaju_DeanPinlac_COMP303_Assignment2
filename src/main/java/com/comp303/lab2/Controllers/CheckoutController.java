@@ -79,6 +79,7 @@ public class CheckoutController {
 			request.setAttribute("Name", customer.getLastName() + ", " + customer.getFirstName());
 			request.setAttribute("ProgramName", program.getProgramName());
 			request.setAttribute("Code", program.getProgramCode());
+			request.setAttribute("Duration", program.getDuration() + " Months");
 			request.setAttribute("Date", DateTimeFormatter.ofLocalizedDate(FormatStyle.FULL).format(enrollment.getStartDate()));
 			request.setAttribute("Paid", enrollment.getAmountPaid());
 
