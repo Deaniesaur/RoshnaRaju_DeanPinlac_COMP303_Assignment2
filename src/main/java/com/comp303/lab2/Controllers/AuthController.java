@@ -10,7 +10,6 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.servlet.ModelAndView;
 
 import com.comp303.lab2.Models.Customer;
 import com.comp303.lab2.Repositories.CustomerRepository;
@@ -20,7 +19,7 @@ public class AuthController {
 	@Autowired
 	private CustomerRepository customerRepository;
 	
-	@RequestMapping({"/", "/login"})
+	@RequestMapping("/login")
 	public String getLogin(Model model) {
 		model.addAttribute("partial", "login");
 		return "index";
