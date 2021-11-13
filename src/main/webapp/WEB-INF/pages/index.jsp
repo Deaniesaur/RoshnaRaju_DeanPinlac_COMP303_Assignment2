@@ -22,7 +22,7 @@
 		<jsp:include page="header.jsp" ></jsp:include>
 	</header>
 	<main class="flex-grow-1">
-		<div class="container p-3 my-3 border rounded bg-light">
+		<div class="container-lg p-3 my-3 border rounded bg-light">
 			<jsp:include page="<%= pagePath %>" ></jsp:include>
 		</div>
 	</main>

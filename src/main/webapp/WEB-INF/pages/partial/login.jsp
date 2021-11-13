@@ -1,4 +1,4 @@
-<div class="login-container">
+<div class="login-container login-container-lg">
 	<form action="login" method="post">
        	<div style="color: #FF0000;">${loginError}</div>
        	<%	session.removeAttribute("loginError");	%>

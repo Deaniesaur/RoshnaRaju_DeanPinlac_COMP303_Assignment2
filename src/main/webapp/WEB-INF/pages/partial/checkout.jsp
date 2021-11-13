@@ -30,4 +30,7 @@
 			<button type="submit" class="btn btn-primary">Pay Now</button>
 		</div>
 	</form>
+	<div class="text-center mt-3">
+		<a href="javascript:history.back()">Back</a>
+	</div>
 </div>

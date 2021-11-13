@@ -16,13 +16,13 @@
 	    	</ul>
 	    	<c:choose>
 				<c:when test="${empty username}">
-					<form class="d-flex" action="login">
+					<form class="d-flex" action="/login">
 			  			<button class="btn btn-outline-light" type="submit">Login</button>
 					</form>
 				</c:when>
 				<c:otherwise>
 					<span class="px-3 text-white">Welcome, ${username}</span>
-					<form class="d-flex" action="logout">
+					<form class="d-flex" action="/logout">
 			  			<button class="btn btn-outline-light" type="submit">Logout</button>
 					</form>
 				</c:otherwise>

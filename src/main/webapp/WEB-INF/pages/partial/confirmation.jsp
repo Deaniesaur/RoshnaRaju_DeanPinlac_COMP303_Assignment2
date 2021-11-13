@@ -26,7 +26,10 @@
 		</dl>
 		<dl class="row justify-content-center">
 			<dt class="col-5">Amount Paid</dt>
-			<dd class="col-7">${Paid}</dd>
+			<dd class="col-7">${Paid} $</dd>
 		</dl>
 	</div>
+	<form action="../profile" class="d-flex justify-content-center">
+		<button type="submit" class="btn btn-primary">View/Update Profile</button>
+	</form>
 </div>
