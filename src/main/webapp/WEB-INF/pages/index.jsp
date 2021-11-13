@@ -1,6 +1,10 @@
 <%@ page language="java" contentType="text/html; charset=ISO-8859-1"
     pageEncoding="ISO-8859-1"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
+<% 
+	String p = request.getAttribute("partial").toString();
+	String pagePath = "partial/" + p + ".jsp";
+%>
 <!DOCTYPE html>
 <html>
 <head>
@@ -14,22 +18,6 @@
 	<script src="http://code.jquery.com/jquery-latest.min.js"></script>
 </head>
 <body>
-	<div class="login-container p-3 border rounded bg-light">
-		<form action="login" method="post">
-        	<div style="color: #FF0000;">${errorMessage}</div>
-			<div class="mb-3">
-				<label for="username" class="form-label">Username</label>
-				<input type="text" class="form-control" name="username" value="${username}">
-			</div>
-			<div class="mb-3">
-				<label for="password" class="form-label">Password</label>
-				<input type="password" class="form-control" name="password">
-			</div>
-			<div class="text-center my-1">
-				<div><button type="submit" class="btn btn-primary">Login</button></div>
-				<div class="mt-3"><a href="register">Don't have account? Register here</a></div>
-			</div>
-		</form>
-	</div>
+	<jsp:include page="<%= pagePath %>" ></jsp:include>
 </body>
 </html>

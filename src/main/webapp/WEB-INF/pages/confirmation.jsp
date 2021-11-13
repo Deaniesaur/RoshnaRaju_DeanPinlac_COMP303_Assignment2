@@ -20,28 +20,26 @@
 		</div>
 		<hr>
 		<div>
-		<div>
 			<dl class="row justify-content-center">
-				<dt class="col-sm-2">Name</dt>
-				<dd class="col-sm-3">${Name}</dd>
+				<dt class="col-2">Name</dt>
+				<dd class="col-3">${Name}</dd>
 			</dl>
 			<dl class="row justify-content-center">
-				<dt class="col-sm-2">Program Name</dt>
-				<dd class="col-sm-3">${ProgramName}</dd>
+				<dt class="col-2">Program Name</dt>
+				<dd class="col-3">${ProgramName}</dd>
 			</dl>
 			<dl class="row justify-content-center">
-				<dt class="col-sm-2">Program Code</dt>
-				<dd class="col-sm-3">${Code}</dd>
+				<dt class="col-2">Program Code</dt>
+				<dd class="col-3">${Code}</dd>
 			</dl>
 			<dl class="row justify-content-center">
-				<dt class="col-sm-2">Start Date</dt>
-				<dd class="col-sm-3">${Date}</dd>
+				<dt class="col-2">Start Date</dt>
+				<dd class="col-3">${Date}</dd>
 			</dl>
 			<dl class="row justify-content-center">
-				<dt class="col-sm-2">Amount Paid</dt>
-				<dd class="col-sm-3">${Paid}</dd>
+				<dt class="col-2">Amount Paid</dt>
+				<dd class="col-3">${Paid}</dd>
 			</dl>
-		</div>
 		</div>
 	</div>
 </body>
